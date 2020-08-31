@@ -1,5 +1,6 @@
 package jp.techacademy.shuzo.taskapp
 import android.app.AlarmManager
+import android.app.DatePickerDialog
 import android.app.PendingIntent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,22 +10,37 @@ import io.realm.RealmChangeListener
 import io.realm.Sort
 import android.content.Intent
 import android.support.v7.app.AlertDialog
-
+import android.view.View
+import io.realm.RealmResults
+import kotlinx.android.synthetic.main.content_input.*
 const val EXTRA_TASK = "jp.techacademy.taro.kirameki.taskapp.TASK"
-
 class MainActivity : AppCompatActivity() {
+
+    var VS:String=""
     private lateinit var mRealm: Realm
     private val mRealmListener = object : RealmChangeListener<Realm> {
         override fun onChange(element: Realm) {
+            VS=""
             reloadListView()
         }
     }
 
     private lateinit var mTaskAdapter: TaskAdapter
 
+    private val GoClickListener = View.OnClickListener {
+        VS=Category_edit_text.text.toString()
+        reloadListView()
+
+    }
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // UI部品の設定
+        GoButton.setOnClickListener(GoClickListener)
 
         fab.setOnClickListener { view ->
             val intent = Intent(this@MainActivity, InputActivity::class.java)
@@ -89,13 +105,22 @@ class MainActivity : AppCompatActivity() {
         reloadListView()
     }
 
+
+
+
+
+
+
     private fun reloadListView() {
-        // Realmデータベースから、「全てのデータを取得して新しい日時順に並べた結果」を取得
-        val taskRealmResults = mRealm.where(Task::class.java).findAll().sort("date", Sort.DESCENDING)
 
-        // 上記の結果を、TaskList としてセットする
-        mTaskAdapter.taskList = mRealm.copyFromRealm(taskRealmResults)
-
+            if (VS=="") {
+                // Realmデータベースから、「全てのデータを取得して新しい日時順に並べた結果」を取得
+                val taskRealmResults =mRealm.where(Task::class.java).findAll().sort("date", Sort.DESCENDING)
+                mTaskAdapter.taskList = mRealm.copyFromRealm(taskRealmResults)
+            }else{
+                val taskRealmResults = mRealm.where(Task::class.java).equalTo("category", VS).findAll().sort("date", Sort.DESCENDING)
+                mTaskAdapter.taskList = mRealm.copyFromRealm(taskRealmResults)
+            }
         // TaskのListView用のアダプタに渡す
         listView1.adapter = mTaskAdapter
 
@@ -103,9 +128,19 @@ class MainActivity : AppCompatActivity() {
         mTaskAdapter.notifyDataSetChanged()
     }
 
+
+
+
     override fun onDestroy() {
         super.onDestroy()
 
         mRealm.close()
     }
+
+
+
+
+
+
+
 }
