@@ -33,11 +33,10 @@ class TaskAdapter(context: Context): BaseAdapter() {
         val view: View = convertView ?: mLayoutInflater.inflate(android.R.layout.simple_list_item_2, null)
         val textView1 = view.findViewById<TextView>(android.R.id.text1)
         val textView2 = view.findViewById<TextView>(android.R.id.text2)
-        textView1.text = taskList[position].title
-
+        textView1.text = "["+taskList[position].category +"] "+taskList[position].title
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.JAPANESE)
         val date = taskList[position].date
         textView2.text = simpleDateFormat.format(date)
-        return view
+         return view
     }
 }

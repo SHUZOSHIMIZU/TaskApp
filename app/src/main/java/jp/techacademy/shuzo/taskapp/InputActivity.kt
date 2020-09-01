@@ -85,7 +85,7 @@ class InputActivity : AppCompatActivity() {
             // 更新の場合
             title_edit_text.setText(mTask!!.title)
             content_edit_text.setText(mTask!!.contents)
-
+            category_edit_text.setText(mTask!!.category)//追加
             val calendar = Calendar.getInstance()
             calendar.time = mTask!!.date
             mYear = calendar.get(Calendar.YEAR)
@@ -96,7 +96,6 @@ class InputActivity : AppCompatActivity() {
 
             val dateString = mYear.toString() + "/" + String.format("%02d", mMonth + 1) + "/" + String.format("%02d", mDay)
             val timeString = String.format("%02d", mHour) + ":" + String.format("%02d", mMinute)
-
             date_button.text = dateString
             times_button.text = timeString
         }
@@ -104,15 +103,12 @@ class InputActivity : AppCompatActivity() {
 
     private fun addTask() {
         val realm = Realm.getDefaultInstance()
-
         realm.beginTransaction()
 
         if (mTask == null) {
             // 新規作成の場合
             mTask = Task()
-
             val taskRealmResults = realm.where(Task::class.java).findAll()
-
             val identifier: Int =
                 if (taskRealmResults.max("id") != null) {
                     taskRealmResults.max("id")!!.toInt() + 1
@@ -124,9 +120,11 @@ class InputActivity : AppCompatActivity() {
 
         val title = title_edit_text.text.toString()
         val content = content_edit_text.text.toString()
+        val category = category_edit_text.text.toString()//追加
 
         mTask!!.title = title
         mTask!!.contents = content
+        mTask!!.category=category//追加
         val calendar = GregorianCalendar(mYear, mMonth, mDay, mHour, mMinute)
         val date = calendar.time
         mTask!!.date = date

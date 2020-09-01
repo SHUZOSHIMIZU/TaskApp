@@ -41,7 +41,7 @@ class TaskAlarmReceiver : BroadcastReceiver() {
 
         // タスクの情報を設定する
         builder.setTicker(task!!.title)   // 5.0以降は表示されない
-        builder.setContentTitle(task.title)
+        builder.setContentTitle("["+task.category+"] "+task.title)
         builder.setContentText(task.contents)
 
         // 通知をタップしたらアプリを起動するようにする
